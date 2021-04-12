@@ -1,6 +1,6 @@
 # Nova Block Device Mapping has deleted volumes
 
-If deleted volumes show up in "openstack server list" and prevent VMs from starting you might have ghost volumes in nova.block_device_mapping.
+If deleted volumes show up in "openstack server show" and prevent VMs from starting you might have ghost volumes in nova.block_device_mapping.
 
 ## Detect
 
