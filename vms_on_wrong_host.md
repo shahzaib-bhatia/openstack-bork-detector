@@ -18,11 +18,6 @@ SET    host = '$CORRECT_HOST',
        node = '$CORRECT_NODE'
 WHERE  uuid = '$UUID';
 
-UPDATE nova.instances
-SET    host = '$CORRECT_HOST',
-       node = '$CORRECT_NODE'
-WHERE  uuid = '$UUID';
-
 DELETE FROM neutron.ml2_port_bindings
 WHERE  status = 'INACTIVE'
        AND port_id = '$PORT_ID';
