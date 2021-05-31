@@ -29,7 +29,8 @@ WHERE  port_id = '$PORT_ID';
 
 UPDATE neutron.ml2_port_binding_levels
 SET    host = '$CORRECT_HOST'
-WHERE  port_id = '$PORT_ID';
+WHERE  port_id = '$PORT_ID'
+LIMIT 1;
 
 DELETE FROM neutron.ml2_port_binding_levels
 WHERE  host != '$CORRECT_HOST'
