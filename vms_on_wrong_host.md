@@ -13,6 +13,8 @@ virsh dominfo UUID
 ## Fix
 
 ````SQL
+BEGIN;
+
 UPDATE nova.instances
 SET    host = '$CORRECT_HOST',
        node = '$CORRECT_NODE'
@@ -35,4 +37,7 @@ LIMIT 1;
 DELETE FROM neutron.ml2_port_binding_levels
 WHERE  host != '$CORRECT_HOST'
        AND port_id = '$PORT_ID';
+       
+-- safety third
+-- COMMIT;
 ````
