@@ -1,3 +1,5 @@
+-- nova db
+
 SELECT COALESCE(m.value, 'default') AS AZ,
        c.hypervisor_hostname,
        SUM(COALESCE(i.count, 0)) AS VMs,
@@ -33,3 +35,49 @@ LEFT JOIN
 WHERE c.deleted = 0 
 GROUP BY az ASC, c.hypervisor_hostname ASC
 WITH ROLLUP;
+
+-- placement db
+
+ SELECT (SELECT name
+        FROM   placement.resource_providers
+        WHERE  id = resource_provider_id)
+       AS name,
+       (SELECT name
+        FROM   placement.resource_classes
+        WHERE  id = resource_class_id)
+       AS resource,
+       (SELECT total
+        FROM   placement.inventories
+        WHERE  inventories.resource_provider_id =
+               allocations.resource_provider_id
+               AND inventories.resource_class_id =
+       allocations.resource_class_id) AS
+       real_total,
+       (SELECT total * allocation_ratio
+        FROM   placement.inventories
+        WHERE  inventories.resource_provider_id =
+               allocations.resource_provider_id
+               AND inventories.resource_class_id =
+       allocations.resource_class_id) AS
+       virtual_total,
+       SUM(used)
+       AS used,
+       (SELECT total - SUM(used)
+        FROM   placement.inventories
+        WHERE  inventories.resource_provider_id =
+               allocations.resource_provider_id
+               AND inventories.resource_class_id =
+       allocations.resource_class_id) AS
+       real_available,
+       (SELECT ( total * allocation_ratio ) - SUM(used)
+        FROM   placement.inventories
+        WHERE  inventories.resource_provider_id =
+               allocations.resource_provider_id
+               AND inventories.resource_class_id =
+       allocations.resource_class_id) AS
+       virtual_available
+FROM   placement.allocations
+GROUP  BY resource_class_id,
+          resource_provider_id
+ORDER  BY name,
+          resource ASC;  
