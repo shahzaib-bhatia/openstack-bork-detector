@@ -37,3 +37,19 @@ neutron port-update $PORT_ID --admin-state-up False
 neutron port-update $PORT_ID --admin-state-up True
 nova interface-attach $INSTANCE_UUID --port-id $PORT_ID
 ````
+
+## Known Issues
+
+If the VM has been rebooted it may have started without a NIC and triggered a libvirt+apparmor bug that will prevent the NIC from being attached with an error like 
+````
+ERROR (ClientException): Failed to attach network adapter device to 84f4fec3-5f59-4643-af0f-4b06598c2afa (HTTP 500) (Request-ID: req-2ac05793-6a8d-49ec-bd1f-bd72851a8e5f)
+````
+This can be corrected by adding the line
+````
+  /dev/vhost-net rw,
+````
+to the file
+````
+/etc/apparmor.d/libvirt/libvirt-${VM_UUID}.files
+````
+Note the lack of quotes surrounding `/dev/vhost-net`. It will differ from other lines in the file. This is expected. Compare it to the file for a working VM if unsure.
