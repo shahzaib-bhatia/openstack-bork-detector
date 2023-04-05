@@ -1,4 +1,4 @@
-# Cinder attachment
+# Cinder volume attachment
 ````SQL
 select instance_uuid,volume_id,group_concat(id) as attachment_ids from cinder.volume_attachment where deleted = 0 group by volume_id having (count(id) > 1);
 ````
